@@ -14,11 +14,11 @@ app.post("/account", (request, response) => {
     const { cpf, name } = request.body;
 
     const customerAlreadyExists = customers.some(
-        (customers) => customers.cpf === cpf
+        (customer) => customer.cpf === cpf
     );
 
     if (customerAlreadyExists) {
-        return response.status(400).json({ error: "Customer already exists!" })
+        return response.status(400).json({ error: "Customer already exists!" });
     }
 
     const id = uuidv4();
@@ -30,8 +30,18 @@ app.post("/account", (request, response) => {
         statement: [],
     });
 
-    return response.status(201).send();
+    return response.status(201).json({ message: "Customer registered successfully!" });
+});
+
+
+app.get("/statement/:cpf", (request, response) => {
+    const { cpf } = request.params;
+
+    const customer = customers.find(customer => customer.cpf === cpf)
+
+    return response.json(customer.statement)
 })
+
 
 app.listen(3333)
 
