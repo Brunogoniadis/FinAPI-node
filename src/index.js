@@ -7,7 +7,6 @@ const app = express();
 app.use(express.json());
 
 const customers = [];
-
 // Middleware
 
 function verifyIdExistsAccountCPF(request, response, next) {
@@ -23,12 +22,14 @@ function verifyIdExistsAccountCPF(request, response, next) {
 
 }
 
+
 function getBalance(statement) {
     const balance = statement.reduce(
         (acc, operation) => {
             if (operation.type === 'credit') {
                 return acc + operation.amount
             } else {
+
                 return acc - operation.amount
             }
         }, 0);
@@ -65,16 +66,17 @@ app.get("/statement/", verifyIdExistsAccountCPF, (request, response) => {
     return response.json(customer.statement);
 })
 
+
 app.post("/deposit", verifyIdExistsAccountCPF, (request, response) => {
     const { description, amount } = request.body;
 
     const { customer } = request;
-
     const statementOperation = {
         description,
         amount,
         created_at: new Date(),
         type: "credit"
+
     }
 
     customer.statement.push(statementOperation);
@@ -86,11 +88,6 @@ app.post("/withdraw", verifyIdExistsAccountCPF, (request, response) => {
     const { amount } = request.body;
     const { customer } = request;
     const balance = getBalance(customer.statement);
-
-    console.log('balance', balance)
-
-    console.log('amount', amount)
-
 
     if (balance < amount) {
         return response.status(400).json({ error: "Insufficient funds!" });
@@ -104,8 +101,25 @@ app.post("/withdraw", verifyIdExistsAccountCPF, (request, response) => {
 
     customer.statement.push(statementOperation);
 
-    return response.status(201).send();
+    return response.status(201).json({ message: "WithDraw achieved successfully done!" });
+
 });
+
+app.get("/statement/date", verifyIdExistsAccountCPF, (request, response) => {
+    const { customer } = request;
+    const { date } = request.query;
+
+    const dateFormat = new Date(date + " 00:00")
+
+    const statement = customer.statement.filter((statement) =>
+        statement.created_at.toDateString() ===
+        new Date(dateFormat).toDateString()
+    )
+
+    return response.json(statement);
+
+})
+
 
 app.listen(3333)
 
