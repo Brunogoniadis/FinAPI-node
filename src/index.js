@@ -24,15 +24,13 @@ function verifyIdExistsAccountCPF(request, response, next) {
 
 
 function getBalance(statement) {
-    const balance = statement.reduce(
-        (acc, operation) => {
-            if (operation.type === 'credit') {
-                return acc + operation.amount
-            } else {
-
-                return acc - operation.amount
-            }
-        }, 0);
+    const balance = statement.reduce((acc, operation) => {
+        if (operation.type === "credit") {
+            return acc + operation.amount
+        } else {
+            return acc - operation.amount;
+        }
+    }, 0)
     return balance
 }
 
@@ -60,7 +58,7 @@ app.post("/account", (request, response) => {
 });
 
 
-app.get("/statement/", verifyIdExistsAccountCPF, (request, response) => {
+app.get("/statement", verifyIdExistsAccountCPF, (request, response) => {
     const { customer } = request;
 
     return response.json(customer.statement);
@@ -134,5 +132,20 @@ app.get("/account", verifyIdExistsAccountCPF, (request, response) => {
 
     return response.json(customer)
 })
+
+app.delete("/account", verifyIdExistsAccountCPF, (request, response) => {
+    const { customer } = request
+
+    const index = customers.findIndex((element) => element.cpf === customer.cpf);
+
+    if (index !== -1) {
+        customers.splice(index, 1);
+    }
+
+    return response.status(200).json(customers);
+})
+
+
+
 app.listen(3333)
 
