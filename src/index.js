@@ -120,6 +120,19 @@ app.get("/statement/date", verifyIdExistsAccountCPF, (request, response) => {
 
 })
 
+app.put("/account", verifyIdExistsAccountCPF, (request, response) => {
+    const { name } = request.body;
+    const { customer } = request;
 
+    customer.name = name;
+
+    return response.status(201).send()
+})
+
+app.get("/account", verifyIdExistsAccountCPF, (request, response) => {
+    const { customer } = request
+
+    return response.json(customer)
+})
 app.listen(3333)
 
