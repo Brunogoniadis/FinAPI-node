@@ -1,3 +1,5 @@
+[![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](https://github.com/Brunogoniadis/FinAPI-node/blob/main/README.en.md)
+
 # FinApi
 
 ## Description
